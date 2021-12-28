@@ -1,0 +1,51 @@
+name: "Publish package to the Maven Repository"
+description: "Pushes package to Maven repository"
+inputs:
+  jdk-version:
+    description: 'The jdk version to use'
+    default: '15'
+    required: false
+  jdk-distribution:
+    description: 'The jdk distribution to use'
+    default: 'adopt'
+    required: false
+  server-id:
+    description: 'Value of repository/id field of the pom.xml'
+    default: 'ossrh'
+    required: false
+  server-username:
+    description: 'Deploy repository username'
+    required: true
+  server-password:
+    description: 'Deploy repository password'
+    required: true
+  deploy-secret-key:
+    description: 'Repository deploy secret key'
+    required: true
+  deploy-secret-key-password:
+    description: 'Repository deploy secret key password'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set up JDK for publishing to Maven Repository
+      uses: actions/setup-java@v2
+      with:
+        java-version: ${{ inputs.jdk-version }}
+        distribution: ${{ inputs.jdk-distribution }}
+        server-id: ${{ inputs.server-id }}
+        server-username: ${{ inputs.server-username }}
+        server-password: ${{ inputs.server-password }}
+    - name: Install gpg secret key
+      shell: bash
+      run: |
+        cat <(echo -e "${{ inputs.deploy-secret-key }}") | gpg --batch --import gpg --list-secret-keys --keyid-format LONG
+    - name: Publish to the Maven Central Repository
+      shell: bash
+      run: |
+        mvn \
+          --no-transfer-progress \
+          --batch-mode \
+          -Dgpg.passphrase=${{ inputs.deploy-secret-key-password }} \
+          clean deploy -Pdeploy
