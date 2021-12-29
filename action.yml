@@ -9,6 +9,14 @@ inputs:
     description: 'The jdk distribution to use'
     default: 'adopt'
     required: false
+  thrift-install:
+    description: 'Install thrift before building package'
+    default: 'false'
+    required: false
+  thrift-version:
+    description: 'Thrift version to use'
+    default: '0.14.2'
+    required: false
   server-id:
     description: 'Value of repository/id field of the pom.xml'
     default: 'ossrh'
@@ -25,10 +33,20 @@ inputs:
   deploy-secret-key-password:
     description: 'Repository deploy secret key password'
     required: true
+  maven-custom-parameters:
+    description: 'Custom maven parameters'
+    required: false
 
 runs:
   using: composite
   steps:
+    - name: Install thrift
+      if: ${{ inputs.thrift-install == 'true' }}
+      uses: supplypike/setup-bin@v1
+      with:
+        uri: 'https://github.com/valitydev/thrift/releases/download/${{ inputs.thrift-version }}/thrift-${{ inputs.thrift-version }}-linux-x86_64.tar.gz'
+        name: 'thrift'
+        version: ${{ inputs.thrift-version }}
     - name: Set up JDK for publishing to Maven Repository
       uses: actions/setup-java@v2
       with:
@@ -47,7 +65,7 @@ runs:
       run: |
         mvn \
           --no-transfer-progress \
-          --batch-mode \
+          --batch-mode ${{ inputs.maven-custom-parameters }}\
           -Dgpg.passphrase=${{ inputs.deploy-secret-key-password }} \
           clean deploy -Pdeploy -Pcommon
       env:
