@@ -49,7 +49,7 @@ runs:
           --no-transfer-progress \
           --batch-mode \
           -Dgpg.passphrase=${{ inputs.deploy-secret-key-password }} \
-          clean deploy -Pdeploy
+          clean deploy -Pdeploy -Pcommon
       env:
         MAVEN_USERNAME: ${{ inputs.server-username }}
         MAVEN_PASSWORD: ${{ inputs.server-password }}
