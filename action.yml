@@ -35,8 +35,8 @@ runs:
         java-version: ${{ inputs.jdk-version }}
         distribution: ${{ inputs.jdk-distribution }}
         server-id: ${{ inputs.server-id }}
-        server-username: ${{ inputs.server-username }}
-        server-password: ${{ inputs.server-password }}
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
     - name: Install gpg secret key
       shell: bash
       run: |
@@ -50,3 +50,6 @@ runs:
           --batch-mode \
           -Dgpg.passphrase=${{ inputs.deploy-secret-key-password }} \
           clean deploy -Pdeploy
+      env:
+        MAVEN_USERNAME: ${{ inputs.server-username }}
+        MAVEN_PASSWORD: ${{ inputs.server-password }}
