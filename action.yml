@@ -25,6 +25,9 @@ inputs:
   deploy-secret-key-password:
     description: 'Repository deploy secret key password'
     required: true
+  maven-args:
+    description: 'Custom maven parameters'
+    required: false
 
 runs:
   using: composite
@@ -47,7 +50,7 @@ runs:
       run: |
         mvn \
           --no-transfer-progress \
-          --batch-mode \
+          --batch-mode ${{ inputs.maven-args }} \
           -Dgpg.passphrase=${{ inputs.deploy-secret-key-password }} \
           clean deploy -Pdeploy -Pcommon
       env:
