@@ -25,6 +25,10 @@ inputs:
   deploy-secret-key-password:
     description: 'Repository deploy secret key password'
     required: true
+  auto-release-after-close:
+    description: 'Auto release package after deploy'
+    default: 'true'
+    required: false
   maven-args:
     description: 'Custom maven parameters'
     required: false
@@ -52,6 +56,7 @@ runs:
           --no-transfer-progress \
           --batch-mode ${{ inputs.maven-args }} \
           -Dgpg.passphrase=${{ inputs.deploy-secret-key-password }} \
+          -DautoReleaseAfterClose=${{ inputs.auto-release-after-close }} \
           clean deploy -Pdeploy -Pcommon
       env:
         MAVEN_USERNAME: ${{ inputs.server-username }}

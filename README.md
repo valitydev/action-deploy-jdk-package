@@ -13,6 +13,7 @@ This action deploy maven package
 | `server-password`            | Deploy repository password                  | ✓        |
 | `deploy-secret-key`          | Repository deploy secret key                | ✓        |
 | `deploy-secret-key-password` | Repository deploy secret key password       | ✓        |
+| `auto-release-after-close`   | Auto release package after deploy           | ✗        | true    |
 
 ## Example Workflow File
 
