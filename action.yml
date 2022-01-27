@@ -44,11 +44,14 @@ runs:
         server-id: ${{ inputs.server-id }}
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
+        cache: 'maven'
+
     - name: Install gpg secret key
       shell: bash
       run: |
         cat <(echo -e "${{ inputs.deploy-secret-key }}") | gpg --batch --import
         gpg --list-secret-keys --keyid-format LONG
+
     - name: Publish to the Maven Central Repository
       shell: bash
       run: |
